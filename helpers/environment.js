@@ -5,30 +5,32 @@
 * Date: 17/02/2022
 * */
 
-//dependencies
+// dependencies
 
-//module scaffolding
+// module scaffolding
+const environments = {};
 
-const environment = {}
-
-
-environment.staging = {
+// staging environment
+environments.staging = {
     port: 3000,
-    envName: 'staging'
-}
+    envName: 'staging',
+};
 
-environment.production = {
+// production environment
+environments.production = {
     port: 5000,
-    envName: 'production'
-}
+    envName: 'production',
+};
 
-//determine which environment was passed as a command line argument
+// determine which environment was passed
+const currentEnvironment =
+    typeof process.env.NODE_ENV === 'string' ? process.env.NODE_ENV : 'staging';
 
-const currentEnvironment = typeof(process.env.NODE_ENV) == 'string' ? process.env.NODE_ENV.toLowerCase() : 'staging';
+// export corresponding environment object
+const environmentToExport =
+    typeof environments[currentEnvironment] === 'object'
+        ? environments[currentEnvironment]
+        : environments.staging;
 
-//export corresponding environment
-
-const environmentToExport = typeof(environment[currentEnvironment]) == 'object' ? environment[currentEnvironment] : environment.staging;
-
-//export module
+// export module
 module.exports = environmentToExport;
