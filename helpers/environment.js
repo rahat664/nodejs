@@ -12,14 +12,16 @@ const environments = {};
 
 // staging environment
 environments.staging = {
-    port: 3000,
-    envName: 'staging',
+  port: 3000,
+  envName: "staging",
+  hashingSecret: "thisIsASecret",
 };
 
 // production environment
 environments.production = {
     port: 5000,
     envName: 'production',
+    hashingSecret: 'thisIsAlsoASecret',
 };
 
 // determine which environment was passed
