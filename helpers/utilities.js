@@ -1,37 +1,42 @@
 /*
- * Title : Utilities
- * Description :
- * Author : Rahat Kabir
- * Date: 17/02/2022
- * */
+ * Title: Utilities
+ * Description: Important utility functions
+ * Author: Rahat Kabir
+ * Date: 11/21/2020
+ *
+ */
 
 // dependencies
-const crypto = require("crypto");
-const environments = require("../helpers/environment");
-// module scaffolding
-const utilities = {};
 
-// parse JSON string to an object in all caps
-utilities.parseJsonStringToObject = (str) => {
-  let outputObject = {};
+// module scaffolding
+const crypto = require('crypto');
+
+const utilities = {};
+const environments = require('./environment');
+
+// parse JSON string to Object
+utilities.parseJSON = (jsonString) => {
+  let output;
+
   try {
-    outputObject = JSON.parse(str);
-  } catch (e) {
-    console.log(e);
-    outputObject = {};
+    output = JSON.parse(jsonString);
+  } catch {
+    output = {};
   }
-  return outputObject;
+
+  return output;
 };
 
+// hash string
 utilities.hash = (str) => {
   if (typeof str === "string" && str.length > 0) {
+    console.log(environments, process.env.NODE_ENV);
     return crypto
-      .createHmac("sha256", environments.hashingSecret)
+      .createHmac("sha256", environments.secretKey)
       .update(str)
       .digest("hex");
-  } else {
-    return false;
   }
+  return false;
 };
 
 // export module

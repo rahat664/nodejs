@@ -2,20 +2,18 @@
  * Title: Handle Request Response
  * Description: Handle Resquest and response
  * Author: Rahat Kabir
- * Date: 16/02/2022
+ * Date: 11/21/2020
  *
  */
 
 // dependencies
 const url = require('url');
-const { StringDecoder } = require('string_decoder');
-const routes = require("../routes");
-const {
-  notFoundHandler,
-} = require("../handlers/routeHandlers/notFoundHandler");
-const { parseJsonStringToObject } = require("../helpers/utilities");
+const {StringDecoder} = require('string_decoder');
+const routes = require('../routes');
+const {notFoundHandler} = require('../handlers/routeHandlers/notFoundHandler');
+const {parseJSON} = require('./utilities');
 
-// module scaffolding
+// modue scaffolding
 const handler = {};
 
 handler.handleReqRes = (req, res) => {
@@ -37,19 +35,21 @@ handler.handleReqRes = (req, res) => {
         headersObject,
     };
 
-    const decoder = new StringDecoder('utf-8');
-    let realData = '';
+    const decoder = new StringDecoder("utf-8");
+    let realData = "";
 
-    const chosenHandler = routes[trimmedPath] ? routes[trimmedPath] : notFoundHandler;
+    const chosenHandler = routes[trimmedPath]
+      ? routes[trimmedPath]
+      : notFoundHandler;
 
-    req.on('data', (buffer) => {
-        realData += decoder.write(buffer);
+    req.on("data", (buffer) => {
+      realData += decoder.write(buffer);
     });
 
     req.on("end", () => {
       realData += decoder.end();
 
-      requestProperties.body = parseJsonStringToObject(realData);
+      requestProperties.body = parseJSON(realData);
 
       chosenHandler(requestProperties, (statusCode, payload) => {
         statusCode = typeof statusCode === "number" ? statusCode : 500;
@@ -62,10 +62,6 @@ handler.handleReqRes = (req, res) => {
         res.writeHead(statusCode);
         res.end(payloadString);
       });
-
-      console.log(realData);
-      // response handle
-      res.end("Hello world");
     });
 };
 

@@ -1,9 +1,10 @@
 /*
- * Title : Environment
- * Description : Environment related helper functions
- * Author : Rahat Kabir
- * Date: 17/02/2022
- * */
+ * Title: Environments
+ * Description: Handle all environment related things
+ * Author: Rahat Kabir
+ * Date: 11/20/2020
+ *
+ */
 
 // dependencies
 
@@ -14,14 +15,14 @@ const environments = {};
 environments.staging = {
   port: 3000,
   envName: "staging",
-  hashingSecret: "thisIsASecret",
+  secretKey: "rahat664",
 };
 
 // production environment
 environments.production = {
   port: 5000,
   envName: "production",
-  hashingSecret: "thisIsAlsoASecret",
+  secretKey: "djkdjskdjksdjksjdskjd",
 };
 
 // determine which environment was passed
@@ -30,9 +31,9 @@ const currentEnvironment =
 
 // export corresponding environment object
 const environmentToExport =
-    typeof environments[currentEnvironment] === "object"
-        ? environments[currentEnvironment]
-        : environments.staging;
+  typeof environments[currentEnvironment] === "object"
+    ? environments[currentEnvironment]
+    : environments.staging;
 
 // export module
 module.exports = environmentToExport;

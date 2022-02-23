@@ -1,20 +1,20 @@
 /*
- * Title: user Handler
- * Description: User Handler
+ * Title: User Handler
+ * Description: Handler to handle user related routes
  * Author: Rahat Kabir
- * Date: 20/02/2022
+ * Date: 11/21/2020
  *
  */
 // dependencies
-const data = require("../../lib/data");
-const {hash} = require("../../helpers/utilities");
-const {parseJsonStringToObject} = require("../../helpers/utilities");
+const data = require('../../lib/data');
+const {hash} = require('../../helpers/utilities');
+const {parseJSON} = require('../../helpers/utilities');
 
 // module scaffolding
 const handler = {};
 
 handler.userHandler = (requestProperties, callback) => {
-  const acceptedMethods = ["get", "post", "put", "delete"];
+  const acceptedMethods = ['get', 'post', 'put', 'delete'];
   if (acceptedMethods.indexOf(requestProperties.method) > -1) {
     handler._users[requestProperties.method](requestProperties, callback);
   } else {
@@ -99,14 +99,14 @@ handler._users.get = (requestProperties, callback) => {
       : false;
   if (phone) {
     // lookup the user
-    data.read("users", phone, (err, u) => {
-      const user = { ...parseJsonStringToObject(u) };
+    data.read('users', phone, (err, u) => {
+      const user = {...parseJSON(u)};
       if (!err && user) {
         delete user.password;
         callback(200, user);
       } else {
         callback(404, {
-          error: "Requested user was not found!",
+          error: 'Requested user was not found!',
         });
       }
     });
@@ -148,7 +148,7 @@ handler._users.put = (requestProperties, callback) => {
     if (firstName || lastName || password) {
       // loopkup the user
       data.read("users", phone, (err1, uData) => {
-        const userData = { ...parseJsonStringToObject(uData) };
+        const userData = { ...parseJSON(uData) };
 
         if (!err1 && userData) {
           if (firstName) {
