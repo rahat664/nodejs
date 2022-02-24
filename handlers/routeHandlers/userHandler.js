@@ -6,15 +6,15 @@
  *
  */
 // dependencies
-const data = require('../../lib/data');
-const {hash} = require('../../helpers/utilities');
-const {parseJSON} = require('../../helpers/utilities');
+const data = require("../../lib/data");
+const {hash} = require("../../helpers/utilities");
+const {parseJSON} = require("../../helpers/utilities");
 
 // module scaffolding
 const handler = {};
 
 handler.userHandler = (requestProperties, callback) => {
-  const acceptedMethods = ['get', 'post', 'put', 'delete'];
+  const acceptedMethods = ["get", "post", "put", "delete"];
   if (acceptedMethods.indexOf(requestProperties.method) > -1) {
     handler._users[requestProperties.method](requestProperties, callback);
   } else {
@@ -99,14 +99,14 @@ handler._users.get = (requestProperties, callback) => {
       : false;
   if (phone) {
     // lookup the user
-    data.read('users', phone, (err, u) => {
-      const user = {...parseJSON(u)};
+    data.read("users", phone, (err, u) => {
+      const user = { ...parseJSON(u) };
       if (!err && user) {
         delete user.password;
         callback(200, user);
       } else {
         callback(404, {
-          error: 'Requested user was not found!',
+          error: "Requested user was not found!",
         });
       }
     });
