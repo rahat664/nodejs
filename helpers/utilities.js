@@ -9,10 +9,10 @@
 // dependencies
 
 // module scaffolding
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 const utilities = {};
-const environments = require('./environment');
+const environments = require("./environment");
 
 // parse JSON string to Object
 utilities.parseJSON = (jsonString) => {
