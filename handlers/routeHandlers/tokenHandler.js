@@ -8,7 +8,8 @@
 // dependencies
 const data = require("../../lib/data");
 const {hash} = require("../../helpers/utilities");
-const {parseJSON} = require("../../helpers/utilities");
+const { parseJSON } = require("../../helpers/utilities");
+const { createRandomString } = require("../../helpers/utilities");
 
 // module scaffolding
 const handler = {};
@@ -16,7 +17,7 @@ const handler = {};
 handler.tokenHandler = (requestProperties, callback) => {
     const acceptedMethods = ["get", "post", "put", "delete"];
     if (acceptedMethods.indexOf(requestProperties.method) > -1) {
-        handler._users[requestProperties.method](requestProperties, callback);
+        handler._token[requestProperties.method](requestProperties, callback);
     } else {
         callback(405);
     }
@@ -25,6 +26,46 @@ handler.tokenHandler = (requestProperties, callback) => {
 handler._token = {};
 
 handler._token.post = (requestProperties, callback) => {
+  const phone =
+    typeof requestProperties.body.phone === "string" &&
+    requestProperties.body.phone.trim().length === 11
+      ? requestProperties.body.phone
+      : false;
+
+  const password =
+    typeof requestProperties.body.password === "string" &&
+    requestProperties.body.password.trim().length > 0
+      ? requestProperties.body.password
+      : false;
+
+  if (phone && password) {
+    data.read("users", phone, (err, userData) => {
+      let hashedPassword = hash(password);
+      if (hashedPassword === parseJSON(userData).password) {
+        let tokenId = createRandomString(20);
+        let expires = Date.now() + 1000 * 60 * 60;
+        let tokenObject = {
+          phone,
+          id: tokenId,
+          expires,
+        };
+
+        data.create("tokens", tokenId, tokenObject, (err) => {
+          if (!err) {
+            callback(200, tokenObject);
+          } else {
+            callback(500, { Error: "Could not create the new token" });
+          }
+        });
+      } else {
+        callback(400, { Error: "Password is incorrect" });
+      }
+    });
+  } else {
+    callback(400, {
+      error: "Invalid phone number. Please try again!",
+    });
+  }
 };
 
 // @TODO: Authentication
