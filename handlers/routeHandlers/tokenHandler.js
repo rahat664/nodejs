@@ -94,9 +94,41 @@ handler._token.get = (requestProperties, callback) => {
   }
 };
 
-// @TODO: Authentication
 handler._token.put = (requestProperties, callback) => {
-
+  const id =
+    typeof requestProperties.body.id === "string" &&
+    requestProperties.body.id.trim().length === 20
+      ? requestProperties.body.id
+      : false;
+  const extend =
+    typeof requestProperties.body.extend === "boolean" &&
+    requestProperties.body.extend === true;
+  if (id && extend) {
+    data.read("tokens", id, (err, tokenData) => {
+      if (parseJSON(tokenData).expires > Date.now()) {
+        const token = { ...parseJSON(tokenData) };
+        token.expires = Date.now() + 1000 * 60 * 60;
+        data.update("tokens", id, token, (err) => {
+          if (!err) {
+            callback(200, token);
+          } else {
+            callback(500, {
+              error: "Could not update the token",
+            });
+          }
+        });
+      } else {
+        callback(400, {
+          error: "Token has already expired",
+        });
+      }
+    });
+  } else {
+    console.log(id, extend);
+    callback(400, {
+      error: "Missing required fields",
+    });
+  }
 };
 
 // @TODO: Authentication
