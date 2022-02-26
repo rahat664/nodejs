@@ -157,31 +157,43 @@ handler._users.put = (requestProperties, callback) => {
       : false;
 
   if (phone) {
-    if (firstName || lastName || password) {
-      // loopkup the user
-      data.read("users", phone, (err1, uData) => {
-        const userData = { ...parseJSON(uData) };
+    const token =
+      typeof requestProperties.headersObject.token === "string"
+        ? requestProperties.headersObject.token
+        : false;
+    tokenHandler._token.verify(token, phone, (tokenId) => {
+      if (tokenId) {
+        if (firstName || lastName || password) {
+          // loopkup the user
+          data.read("users", phone, (err1, uData) => {
+            const userData = { ...parseJSON(uData) };
 
-        if (!err1 && userData) {
-          if (firstName) {
-            userData.firstName = firstName;
-          }
-          if (lastName) {
-            userData.firstName = firstName;
-          }
-          if (password) {
-            userData.password = hash(password);
-          }
+            if (!err1 && userData) {
+              if (firstName) {
+                userData.firstName = firstName;
+              }
+              if (lastName) {
+                userData.firstName = firstName;
+              }
+              if (password) {
+                userData.password = hash(password);
+              }
 
-          // store to database
-          data.update("users", phone, userData, (err2) => {
-            if (!err2) {
-              callback(200, {
-                message: "User was updated successfully!",
+              // store to database
+              data.update("users", phone, userData, (err2) => {
+                if (!err2) {
+                  callback(200, {
+                    message: "User was updated successfully!",
+                  });
+                } else {
+                  callback(500, {
+                    error: "There was a problem in the server side!",
+                  });
+                }
               });
             } else {
-              callback(500, {
-                error: "There was a problem in the server side!",
+              callback(400, {
+                error: "You have a problem in your request!",
               });
             }
           });
@@ -190,12 +202,12 @@ handler._users.put = (requestProperties, callback) => {
             error: "You have a problem in your request!",
           });
         }
-      });
-    } else {
-      callback(400, {
-        error: "You have a problem in your request!",
-      });
-    }
+      } else {
+        callback(403, {
+          error: "You are not authorized to access this resource",
+        });
+      }
+    });
   } else {
     callback(400, {
       error: "Invalid phone number. Please try again!",
