@@ -46,6 +46,7 @@ handler.handleReqRes = (req, res) => {
 
   req.on("data", (buffer) => {
     realData += decoder.write(buffer);
+    console.log(headersObject);
   });
 
   req.on("end", () => {

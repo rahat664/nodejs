@@ -8,8 +8,8 @@
 // dependencies
 const data = require("../../lib/data");
 const {hash} = require("../../helpers/utilities");
-const { parseJSON } = require("../../helpers/utilities");
-const { createRandomString } = require("../../helpers/utilities");
+const {parseJSON} = require("../../helpers/utilities");
+const {createRandomString} = require("../../helpers/utilities");
 
 // module scaffolding
 const handler = {};
@@ -165,6 +165,18 @@ handler._token.delete = (requestProperties, callback) => {
       error: "There was a problem in your request!",
     });
   }
+};
+
+handler._token.verify = (id, phone, callback) => {
+  data.read("tokens", id, (err, tokenData) => {
+    if (!err && tokenData) {
+      if (parseJSON(tokenData).phone === phone) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    }
+  });
 };
 
 module.exports = handler;
