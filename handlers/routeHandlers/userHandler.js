@@ -233,7 +233,7 @@ handler._users.delete = (requestProperties, callback) => {
             data.delete("users", phone, (err2) => {
               if (!err2) {
                 callback(200, {
-                  message: "User was successfully deleted!",
+                  message: "User was  deleted successfully!",
                 });
               } else {
                 callback(500, {
